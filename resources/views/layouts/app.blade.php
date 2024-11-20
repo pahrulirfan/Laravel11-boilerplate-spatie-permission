@@ -10,7 +10,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Favicon -->
-    <link href="/admin/img/favicon.ico" rel="icon">
+    <link href="/admin/favicon.png" rel="icon">
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,7 +48,7 @@
     <!-- Sidebar Start -->
     <div class="sidebar pe-4 pb-3">
         <nav class="navbar bg-light navbar-light">
-            <a href="index.html" class="navbar-brand mx-4 mb-3">
+            <a href="{{ route('home') }}" class="navbar-brand mx-4 mb-3">
                 <h3 class="text-primary"><i class="fa fa-hashtag me-2"></i>DASHMIN</h3>
             </a>
             <div class="d-flex align-items-center ms-4 mb-4">
@@ -59,8 +59,8 @@
                     </div>
                 </div>
                 <div class="ms-3">
-                    <h6 class="mb-0">Jhon Doe</h6>
-                    <span>Admin</span>
+                    <h6 class="mb-0">{{ Auth::user()->name }}</h6>
+                    <span>{{ Auth::user()->roles[0]->name }}</span>
                 </div>
             </div>
             <div class="navbar-nav w-100">
@@ -102,7 +102,7 @@
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                         <img class="rounded-circle me-lg-2" src="/admin/img/user.jpg" alt=""
                              style="width: 40px; height: 40px;">
-                        <span class="d-none d-lg-inline-flex">John Doe</span>
+                        <span class="d-none d-lg-inline-flex">{{ Auth::user()->name }}</span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                         <a href="#" class="dropdown-item">My Profile</a>
@@ -166,88 +166,15 @@
 
 <!-- Template Javascript -->
 <script src="/admin/js/main.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    function confirmDelete(url, onSuccess = () => {}, onError = () => {}) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'This action cannot be undone!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(url, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json',
-                    },
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Tampilkan notifikasi sukses di kanan atas
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'success',
-                                title: data.message,
-                                showConfirmButton: false,
-                                timer: 2000
-                            });
-
-                            // Tunda refresh halaman selama 3 detik
-                            setTimeout(() => {
-                                location.reload();
-                            }, 3000);
-
-                            onSuccess(data);
-                        } else {
-                            // Tampilkan notifikasi error di kanan atas
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'error',
-                                title: data.message || 'Something went wrong.',
-                                showConfirmButton: false,
-                                timer: 3000
-                            });
-                            onError(data);
-                        }
-                    })
-                    .catch(error => {
-                        // Tampilkan notifikasi error jika permintaan gagal
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'error',
-                            title: 'Something went wrong.',
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
-                        console.error(error);
-                        onError(error);
-                    });
-            }
-        });
-    }
-</script>
 <script>
     $(document).ready(function () {
-        // Sembunyikan alert setelah 3 detik
         setTimeout(function () {
             $('.alert').fadeOut(500, function () {
-                $(this).remove(); // Hapus elemen dari DOM setelah animasi selesai
+                $(this).remove();
             });
-        }, 3000); // 3000ms = 3 detik
+        }, 3000);
     });
 </script>
-
-
-
 @stack('scripts')
 </body>
 
